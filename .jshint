@@ -16,5 +16,8 @@
   "devel": true,
   "node": true,
   "nonstandard": true,
-  "globals": {}
+  "globals": {
+    "ig": true,
+    "impact": true
+  }
 }
