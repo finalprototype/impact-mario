@@ -1,0 +1,40 @@
+{
+  "name": "onswipe-mario",
+  "version": "0.0.1",
+  "description": "A Canvas simulated Super Mario Bros, customized for Onswipe",
+  "main": "server.js",
+  "dependencies": {
+    "grunt": "~0.4.1",
+    "express": "~3.2.0",
+    "colors": "~0.6.0-1",
+    "async": "~0.2.7"
+  },
+  "devDependencies": {
+    "jshint": "~1.1.0",
+    "grunt-contrib-clean": "~0.4.1",
+    "grunt-contrib-uglify": "~0.2.0",
+    "grunt-contrib-jshint": "~0.4.3",
+    "grunt-replace": "~0.4.3",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-copy": "~0.4.1",
+    "colors": "~0.6.0-1",
+    "ejs": "~0.8.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:finalprototype/Super-Mario-Impact.git"
+  },
+  "keywords": [
+    "html5",
+    "canvas",
+    "mario",
+    "onswipe"
+  ],
+  "author": "Nick Manfre <final.prototype@gmail.com>",
+  "license": "BSD",
+  "gitHead": "51e04b375ac7d65a095c962ffc48b999c81613d8"
+}
