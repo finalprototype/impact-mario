@@ -25,6 +25,12 @@ module.exports = function (grunt) {
   var releaseMinFile = releaseFolder + 'js/mario.min.js';
   var jsHintFile = '.jshint';
 
+  //s3 stuff
+  var s3Test = 'marioTest/';
+  var s3Folder = 'mario/';
+  var asset_url = 'http://assets.onswipe.com/mario';
+  var game_url = asset_url + '/js/mario.min.js';
+
   var version = require('./package.json').version;
 
   var lintFiles =  [
@@ -106,20 +112,19 @@ module.exports = function (grunt) {
 
   // Impact Files
   var vendorFiles = [
+    systemFolder + 'impact.js',
+    systemFolder + 'system.js',
     systemFolder + 'animation.js',
     systemFolder + 'background-map.js',
     systemFolder + 'collision-map.js',
-    systemFolder + 'debug',
     systemFolder + 'entity.js',
     systemFolder + 'font.js',
     systemFolder + 'game.js',
     systemFolder + 'image.js',
-    systemFolder + 'impact.js',
     systemFolder + 'input.js',
     systemFolder + 'loader.js',
     systemFolder + 'map.js',
     systemFolder + 'sound.js',
-    systemFolder + 'system.js',
     systemFolder + 'timer.js',
     systemFolder + 'util.js',
     pluginsFolder + 'dynscale.js',
@@ -252,6 +257,18 @@ module.exports = function (grunt) {
     });
   };
 
+  var baking = function (callback) {
+    var exec = require('child_process').exec;
+    exec('php tools/bake.php lib/impact/impact.js lib/game/main.js release/baked.js', function (err, stdOut, stdErr) {
+      var out = String(stdOut);
+      var baked = out.indexOf('baked') >= 0;
+      if(baked){
+        console.log('Toasty as fuck!');
+        callback();
+      }
+    });
+  };
+
   grunt.registerTask('check', 'Check the status of this git dir', function () {
     var done = this.async();
     checkIsMaster(function () {
@@ -286,20 +303,24 @@ module.exports = function (grunt) {
     var fs = require('fs');
     var done = this.async();
 
-    fs.readFile('./mario.ejs', 'utf8', function (err, data) {
+    fs.readFile('./views/mario.ejs', 'utf8', function (err, data) {
       if (err) {
         throw err;
       }
 
       var html = ejs.render(data, {
-        asset_url: asset_url,
-        reader_url: reader_url,
+        game_url: game_url,
         timestamp: Date.now()
       });
 
       fs.writeFile(releaseFolder + 'index.html', html, 'utf8', done);
 
     });
+  });
+
+  grunt.registerTask('bakery', 'Bake the game file and minify', function() {
+    var done = this.async();
+    baking(done);
   });
 
   var colors = require('colors');
@@ -316,8 +337,8 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-replace');
 
   // create our tasks
-  grunt.registerTask('dev', ['clean', 'jshint', 'concat:dev', 'replace:release', 'concat:release', 'copy:media']);
-  grunt.registerTask('prod', ['clean', 'jshint', 'concat:dev', 'replace:release', 'concat:release', 'copy:media', 'uglify:prod']);
+  grunt.registerTask('dev', ['clean', 'jshint', 'concat:dev', 'replace:release', 'concat:release', 'copy:media', 'bakery']);
+  grunt.registerTask('prod', ['clean', 'jshint', 'concat:dev', 'replace:release', 'concat:release', 'copy:media']);
   grunt.registerTask('deploy', ['sure', 'check', 'prod', 'html', 'clean:release', 'awesome']);
-  grunt.registerTask('default', ['dev']);
+  grunt.registerTask('default', ['dev','html']);
 };
