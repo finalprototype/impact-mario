@@ -6,6 +6,7 @@ module.exports = function (grunt) {
   var entityFolder = srcFolder + 'entities/';
   var levelsFolder = srcFolder + 'levels/';
   var screensFolder = srcFolder + 'screens/';
+  var mediaFolder = 'media/';
 
   // system folders
   var systemFolder = 'lib/impact/';
@@ -217,7 +218,9 @@ module.exports = function (grunt) {
     copy: {
       media: {
         files: [
-          {expand: true, cwd: mediaReleaseFolder, src: '**', dest: mediaReleaseFolder}
+          {expand: true, src: [mediaFolder+'sprites/*'], dest: releaseFolder},
+          {expand: true, src: [mediaFolder+'audio/*'], dest: releaseFolder},
+          {expand: true, src: [mediaFolder+'music/*'], dest: releaseFolder}
         ]
       }
     },
@@ -283,7 +286,7 @@ module.exports = function (grunt) {
 
   var baking = function (callback) {
     var exec = require('child_process').exec;
-    exec('php tools/bake.php lib/impact/impact.js lib/game/main.js release/mario.min.js', function (err, stdOut, stdErr) {
+    exec('php tools/bake.php lib/impact/impact.js lib/game/main.js release/js/mario.min.js', function (err, stdOut, stdErr) {
       var out = String(stdOut);
       var baked = out.indexOf('baked') >= 0;
       if(baked){
@@ -351,6 +354,18 @@ module.exports = function (grunt) {
   grunt.registerTask('awesome', function() {
     console.log('Mario is Live!'.rainbow);
   });
+  grunt.registerTask('tested', function() {
+    console.log('Mario test deploy completed!'.rainbow);
+    console.log('Please verify release files, then click enter to continue...'.bold.cyan);
+
+    var done = this.async();
+    var response = function (chunk) {
+      process.stdin.removeListener('data', response);
+      done();
+    };
+
+    util.userInput(response);
+  });
 
   // load up the grunt plugins
   grunt.loadNpmTasks('grunt-contrib-jshint');
@@ -359,10 +374,12 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-replace');
+  grunt.loadNpmTasks('grunt-s3');
 
   // create our tasks
   grunt.registerTask('dev', ['clean', 'jshint', 'concat:dev', 'replace:release', 'concat:release', 'copy:media', 'bakery']);
   grunt.registerTask('prod', ['clean', 'jshint', 'concat:dev', 'replace:release', 'concat:release', 'copy:media', 'bakery']);
-  grunt.registerTask('deploy', ['sure', 'check', 'prod', 'html', 'clean:release', 'awesome']);
+  grunt.registerTask('deploy', ['sure', 'check', 'prod', 'html', 'clean:tmp', 'clean:release', 'awesome']);
+  grunt.registerTask('test', ['prod', 'html', 'clean:tmp', 's3:test', 'tested', 'clean:release']);
   grunt.registerTask('default', ['dev','html']);
 };
