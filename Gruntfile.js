@@ -26,9 +26,9 @@ module.exports = function (grunt) {
   var jsHintFile = '.jshint';
 
   //s3 stuff
-  var s3Test = 'marioTest/';
-  var s3Folder = 'mario/';
-  var asset_url = 'http://assets.onswipe.com/mario';
+  var s3Test = '8bit/test';
+  var s3Folder = '8bit/';
+  var asset_url = 'http://cdn.onswipe.com/8bit';
   var game_url = asset_url + '/js/mario.min.js';
 
   var version = require('./package.json').version;
@@ -145,8 +145,32 @@ module.exports = function (grunt) {
     }
   };
 
+  var s3Conf = {};
+  var fs = require('fs');
+  if (fs.existsSync(process.env.HOME+'/.ops')) {
+    s3Conf = require(process.env.HOME+'/.ops').aws;
+  }
+
+
+
   // grunt configuration
   grunt.initConfig({
+
+    s3: {
+      options: {
+        key: s3Conf.accessKeyId,
+        secret: s3Conf.secretAccessKey,
+        bucket: 'cdn.onswipe.com',
+        access: 'public-read'
+      },
+      test: {
+        upload: [{
+          src: releaseFolder + '**',
+          dest: s3Test,
+          rel: releaseFolder
+        }]
+      }
+    },
 
     // lint
     jshint: {
@@ -259,7 +283,7 @@ module.exports = function (grunt) {
 
   var baking = function (callback) {
     var exec = require('child_process').exec;
-    exec('php tools/bake.php lib/impact/impact.js lib/game/main.js release/baked.js', function (err, stdOut, stdErr) {
+    exec('php tools/bake.php lib/impact/impact.js lib/game/main.js release/mario.min.js', function (err, stdOut, stdErr) {
       var out = String(stdOut);
       var baked = out.indexOf('baked') >= 0;
       if(baked){
@@ -338,7 +362,7 @@ module.exports = function (grunt) {
 
   // create our tasks
   grunt.registerTask('dev', ['clean', 'jshint', 'concat:dev', 'replace:release', 'concat:release', 'copy:media', 'bakery']);
-  grunt.registerTask('prod', ['clean', 'jshint', 'concat:dev', 'replace:release', 'concat:release', 'copy:media']);
+  grunt.registerTask('prod', ['clean', 'jshint', 'concat:dev', 'replace:release', 'concat:release', 'copy:media', 'bakery']);
   grunt.registerTask('deploy', ['sure', 'check', 'prod', 'html', 'clean:release', 'awesome']);
   grunt.registerTask('default', ['dev','html']);
 };
