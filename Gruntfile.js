@@ -379,7 +379,7 @@ module.exports = function (grunt) {
   // create our tasks
   grunt.registerTask('dev', ['clean', 'jshint', 'concat:dev', 'replace:release', 'concat:release', 'copy:media', 'bakery']);
   grunt.registerTask('prod', ['clean', 'jshint', 'concat:dev', 'replace:release', 'concat:release', 'copy:media', 'bakery']);
-  grunt.registerTask('deploy', ['sure', 'check', 'prod', 'html', 'clean:tmp', 'clean:release', 'awesome']);
+  grunt.registerTask('deploy', ['sure', 'check', 'prod', 'html', 'clean:tmp', 's3:test', 'clean:release', 'awesome']);
   grunt.registerTask('test', ['prod', 'html', 'clean:tmp', 's3:test', 'tested', 'clean:release']);
   grunt.registerTask('default', ['dev','html']);
 };
