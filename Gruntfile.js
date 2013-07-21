@@ -219,6 +219,7 @@ module.exports = function (grunt) {
       media: {
         files: [
           {expand: true, src: [mediaFolder+'sprites/*'], dest: releaseFolder},
+          {expand: true, src: [mediaFolder+'fonts/*'], dest: releaseFolder},
           {expand: true, src: [mediaFolder+'audio/*'], dest: releaseFolder},
           {expand: true, src: [mediaFolder+'music/*'], dest: releaseFolder}
         ]
@@ -233,6 +234,15 @@ module.exports = function (grunt) {
         files: [
           {src: releaseFile, dest: releaseMinFile}
         ]
+      }
+    },
+
+    play: {
+      dev: {
+        file: './media/audio/start.mp3'
+      },
+      deploy: {
+        file: './media/audio/smb_stage_clear.mp3'
       }
     }
 
@@ -375,11 +385,12 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-replace');
   grunt.loadNpmTasks('grunt-s3');
+  grunt.loadNpmTasks('grunt-play');
 
   // create our tasks
-  grunt.registerTask('dev', ['clean', 'jshint', 'concat:dev', 'replace:release', 'concat:release', 'copy:media', 'bakery']);
+  grunt.registerTask('dev', ['clean', 'jshint', 'concat:dev', 'replace:release', 'concat:release', 'copy:media', 'bakery', 'play:dev']);
   grunt.registerTask('prod', ['clean', 'jshint', 'concat:dev', 'replace:release', 'concat:release', 'copy:media', 'bakery']);
-  grunt.registerTask('deploy', ['sure', 'check', 'prod', 'html', 'clean:tmp', 's3:test', 'clean:release', 'awesome']);
+  grunt.registerTask('deploy', ['sure', 'check', 'prod', 'html', 'clean:tmp', 's3:test', 'clean:release', 'awesome', 'play:deployed']);
   grunt.registerTask('test', ['prod', 'html', 'clean:tmp', 's3:test', 'tested', 'clean:release']);
-  grunt.registerTask('default', ['dev','html']);
+  grunt.registerTask('default', ['dev']);
 };

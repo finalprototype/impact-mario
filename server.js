@@ -1,37 +1,36 @@
-var http = require("http"),
-    url = require("url"),
-    path = require("path"),
-    fs = require("fs")
-    port = process.argv[2] || 3001;
+var express = require('express');
+var url = require('url');
+var grunt = require('grunt');
 
-http.createServer(function(request, response) {
+var app = module.exports = express();
 
-  var uri = url.parse(request.url).pathname
-    , filename = path.join(process.cwd(), uri);
+// Configuration
 
-  path.exists(filename, function(exists) {
-    if(!exists) {
-      response.writeHead(404, {"Content-Type": "text/plain"});
-      response.write("404 Not Found\n");
-      response.end();
-      return;
-    }
+app.configure(function(){
+  app.set('views', __dirname + '/views');
+  app.set('view engine', 'ejs');
+  app.set("view options", { layout: false });
+  app.use(express.bodyParser());
+  app.use(express.methodOverride());
+  app.use(express.static(__dirname + '/release'));
+  app.use(express.static(__dirname + '/media'));
+  app.use(app.router);
+  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+  app.set("port", process.argv[2] || 3013);
+});
 
-    if (fs.statSync(filename).isDirectory()) filename += '/index.html';
+//run grunt tasks depending on environment, and then boot server up
+app.get('/', function(req, res) {
 
-    fs.readFile(filename, "binary", function(err, file) {
-      if(err) {        
-        response.writeHead(500, {"Content-Type": "text/plain"});
-        response.write(err + "\n");
-        response.end();
-        return;
-      }
-
-      response.writeHead(200);
-      response.write(file, "binary");
-      response.end();
-    });
+  res.render('mario.ejs', {
+    game_url: '/js/mario.min.js',
+    timestamp: Date.now()
   });
-}).listen(parseInt(port, 10));
+});
 
-console.log("Static file server running at\n  => http://localhost:" + port);
+grunt.tasks('dev', {}, function() {
+  console.log('grunt is done');
+  app.listen(app.get("port"), function(){
+    console.log("Express server listening on port " + app.get("port"));
+  });
+});
