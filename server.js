@@ -13,13 +13,11 @@ app.configure(function(){
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(express.static(__dirname + '/release'));
-  app.use(express.static(__dirname + '/media'));
   app.use(app.router);
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
   app.set("port", process.argv[2] || 3013);
 });
 
-//run grunt tasks depending on environment, and then boot server up
 app.get('/', function(req, res) {
 
   res.render('mario.ejs', {
