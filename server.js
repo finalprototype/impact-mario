@@ -21,7 +21,7 @@ app.configure(function(){
 app.get('/', function(req, res) {
 
   res.render('mario.ejs', {
-    game_url: '/js/mario.min.js',
+    game_url: '/js/mario.js',
     timestamp: Date.now()
   });
 });

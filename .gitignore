@@ -1,6 +1,7 @@
 node_modules/
 .htaccess
 .DS_Store
+.env*
 *.sublime-workspace
 *.sublime-project
 npm-debug.log

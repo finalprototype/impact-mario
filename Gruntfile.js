@@ -1,6 +1,8 @@
 module.exports = function (grunt) {
   "use strict";
 
+  require('dotenv').config()
+
   // source folders
   var srcFolder = 'lib/game/';
   var entityFolder = srcFolder + 'entities/';
@@ -29,8 +31,8 @@ module.exports = function (grunt) {
   //s3 stuff
   var s3Test = '8bit/test';
   var s3Folder = '8bit/';
-  var asset_url = 'http://cdn.onswipe.com/8bit';
-  var game_url = asset_url + '/js/mario.min.js';
+  var asset_url = '.';// https://dxcrey4r28b1w.cloudfront.net/smb1';
+  var game_url = asset_url + '/js/mario.js';
 
   var version = require('./package.json').version;
 
@@ -105,7 +107,9 @@ module.exports = function (grunt) {
     entityFolder + 'trigger-warp.js',
 
     // levels
-    levelsFolder + 'onswipecore.js',
+    levelsFolder + 'world11.js',
+    levelsFolder + 'world12.js',
+    levelsFolder + 'worldspecial.js',
 
     // main game file
     srcFolder + 'main.js'
@@ -146,12 +150,6 @@ module.exports = function (grunt) {
     }
   };
 
-  var s3Conf = {};
-  var fs = require('fs');
-  if (fs.existsSync(process.env.HOME+'/.ops')) {
-    s3Conf = require(process.env.HOME+'/.ops').aws;
-  }
-
 
 
   // grunt configuration
@@ -159,9 +157,9 @@ module.exports = function (grunt) {
 
     s3: {
       options: {
-        key: s3Conf.accessKeyId,
-        secret: s3Conf.secretAccessKey,
-        bucket: 'cdn.onswipe.com',
+        key: process.env.AWS_KEY,
+        secret: process.env.AWS_SECRET,
+        bucket: process.env.AWS_S3_BUCKET,
         access: 'public-read'
       },
       test: {
@@ -221,7 +219,8 @@ module.exports = function (grunt) {
           {expand: true, src: [mediaFolder+'sprites/*'], dest: releaseFolder},
           {expand: true, src: [mediaFolder+'fonts/*'], dest: releaseFolder},
           {expand: true, src: [mediaFolder+'audio/*'], dest: releaseFolder},
-          {expand: true, src: [mediaFolder+'music/*'], dest: releaseFolder}
+          {expand: true, src: [mediaFolder+'music/*'], dest: releaseFolder},
+          {expand: true, src: ['lib/**/*'], dest: releaseFolder}
         ]
       }
     },
@@ -234,15 +233,6 @@ module.exports = function (grunt) {
         files: [
           {src: releaseFile, dest: releaseMinFile}
         ]
-      }
-    },
-
-    play: {
-      dev: {
-        file: './media/audio/start.mp3'
-      },
-      deploy: {
-        file: './media/audio/smb_stage_clear.mp3'
       }
     }
 
@@ -388,9 +378,9 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-play');
 
   // create our tasks
-  grunt.registerTask('dev', ['clean', 'jshint', 'concat:dev', 'replace:release', 'concat:release', 'copy:media', 'bakery', 'play:dev']);
+  grunt.registerTask('dev', ['clean', 'jshint', 'concat:dev', 'replace:release', 'concat:release', 'copy:media', 'bakery']);
   grunt.registerTask('prod', ['clean', 'jshint', 'concat:dev', 'replace:release', 'concat:release', 'copy:media', 'bakery']);
-  grunt.registerTask('deploy', ['sure', 'check', 'prod', 'html', 'clean:tmp', 's3:test', 'clean:release', 'awesome', 'play:deployed']);
-  grunt.registerTask('test', ['prod', 'html', 'clean:tmp', 's3:test', 'tested', 'clean:release']);
+  grunt.registerTask('deploy', ['sure', 'check', 'prod', 'html', 'clean:tmp', 'clean:release', 'awesome']);
+  grunt.registerTask('test', ['prod', 'html', 'clean:tmp', 'tested', 'clean:release']);
   grunt.registerTask('default', ['dev']);
 };

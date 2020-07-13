@@ -11,18 +11,19 @@
     "phantom": "~0.4.2"
   },
   "devDependencies": {
-    "jshint": "~1.1.0",
+    "colors": "~0.6.0-1",
+    "dotenv": "^8.2.0",
+    "ejs": "~0.8.3",
     "grunt-contrib-clean": "~0.4.1",
-    "grunt-contrib-uglify": "~0.2.0",
-    "grunt-contrib-jshint": "~0.4.3",
-    "grunt-replace": "~0.4.3",
     "grunt-contrib-concat": "~0.3.0",
     "grunt-contrib-copy": "~0.4.1",
-    "colors": "~0.6.0-1",
-    "ejs": "~0.8.3",
-    "phantom": "~0.4.2",
+    "grunt-contrib-jshint": "~0.4.3",
+    "grunt-contrib-uglify": "~0.2.0",
+    "grunt-play": "~0.1.0",
+    "grunt-replace": "~0.4.3",
     "grunt-s3": "~0.2.0-alpha.2",
-    "grunt-play": "~0.1.0"
+    "jshint": "~1.1.0",
+    "phantom": "~0.4.2"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

@@ -1,11 +1,7 @@
-<!DOCTYPE HTML>
-<html lang="en-us">
+<!DOCTYPE html>
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Impact Mario by Finalprototype</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <script type="text/javascript" src="<%= game_url %>?<%= timestamp %>"></script>
+  <title>smb prototype by fp</title>
   <style type="text/css">
     html,body {
       background-color: #000;
@@ -20,12 +16,14 @@
       position: absolute;
       left: 0;
       right: 0;
+      top: 0;
       bottom: 0;
       margin: auto;
       border: 1px solid #555;
-      width:99.5%;
     }
   </style>
+
+  <script type="text/javascript" src="<%= game_url %>?<%= timestamp %>"></script>
 </head>
 <body>
   <canvas id="canvas"></canvas>

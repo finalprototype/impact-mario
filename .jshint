@@ -51,6 +51,10 @@
     "EntityEmptyspace":true,
     "EntityTriggerEnd":true,
     "EntityTriggerWarp":true,
-    "Mario":true
+    "LevelWorld11":true,
+    "LevelWorld12":true,
+    "LevelWorldspecial":true,
+    "Mario":true,
+    "GameTitle":true
   }
 }
