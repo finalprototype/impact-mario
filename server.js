@@ -26,7 +26,7 @@ app.get('/', function(req, res) {
   });
 });
 
-grunt.tasks('dev', {}, function() {
+grunt.tasks('default', {}, function() {
   console.log('grunt is done');
   app.listen(app.get("port"), function(){
     console.log("Express server listening on port " + app.get("port"));

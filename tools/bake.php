@@ -8,7 +8,7 @@ if( count($argv) < 3 ) {
 $inFiles = array_slice( $argv, 1, -1 );
 $outFile = $argv[ count($argv)-1 ];
 
-$baker = new Baker( Baker::MINIFIED );
+$baker = new Baker( Baker::PLAIN );
 $baker->bake( $inFiles, $outFile );
 
 

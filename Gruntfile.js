@@ -1,144 +1,30 @@
 module.exports = function (grunt) {
   "use strict";
 
-  require('dotenv').config()
-
-  // source folders
-  var srcFolder = 'lib/game/';
-  var entityFolder = srcFolder + 'entities/';
-  var levelsFolder = srcFolder + 'levels/';
-  var screensFolder = srcFolder + 'screens/';
-  var mediaFolder = 'media/';
-
-  // system folders
-  var systemFolder = 'lib/impact/';
-  var pluginsFolder = 'lib/plugins';
-
-  // dist folders
-  var releaseFolder = 'release/';
-  var jsReleaseFolder = releaseFolder + 'js/';
-  var mediaReleaseFolder = releaseFolder + 'media/';
-
-  // tmp stuff
-  var tmpFolder = releaseFolder + 'tmp/';
-  var tmpFile = tmpFolder + 'js/mario.js';
-
-  // files
-  var releaseFile = releaseFolder + 'js/mario.js';
-  var releaseMinFile = releaseFolder + 'js/mario.min.js';
-  var jsHintFile = '.jshint';
-
-  //s3 stuff
-  var s3Test = '8bit/test';
-  var s3Folder = '8bit/';
-  var asset_url = '.';// https://dxcrey4r28b1w.cloudfront.net/smb1';
-  var game_url = asset_url + '/js/mario.js';
+  require('dotenv').config();
 
   var version = require('./package.json').version;
+  const DEVELOPMENT = process.env.NODE_ENV === 'development';
 
-  var lintFiles =  [
-    entityFolder + 'block-brick.js',
-    entityFolder + 'block-poweritem.js',
-    entityFolder + 'block-question-coin.js',
-    entityFolder + 'block-unbreakable.js',
-    entityFolder + 'block.js',
-    entityFolder + 'coin.js',
-    entityFolder + 'emptyspace.js',
-    entityFolder + 'enemy-beetle.js',
-    entityFolder + 'enemy-fireball.js',
-    entityFolder + 'enemy-goomba.js',
-    entityFolder + 'enemy-koopa.js',
-    entityFolder + 'enemy-pirana.js',
-    entityFolder + 'enemy.js',
-    entityFolder + 'particle-brick.js',
-    entityFolder + 'particle-coin.js',
-    entityFolder + 'particle.js',
-    entityFolder + 'pipe-end.js',
-    entityFolder + 'pipe-extend.js',
-    entityFolder + 'pipe-normal.js',
-    entityFolder + 'pipe.js',
-    entityFolder + 'platform-spawner.js',
-    entityFolder + 'platform.js',
-    entityFolder + 'player.js',
-    entityFolder + 'powerup-flower.js',
-    entityFolder + 'powerup-life.js',
-    entityFolder + 'powerup-mushroom.js',
-    entityFolder + 'powerup-poison.js',
-    entityFolder + 'powerup-star.js',
-    entityFolder + 'powerup.js',
-    entityFolder + 'trigger-end.js',
-    entityFolder + 'trigger-warp.js',
-    srcFolder + 'main.js'
-  ];
+  const srcFolder = 'lib/game/';
+  const mediaFolder = 'media/';
+  const systemFolder = 'lib/impact/';
+  const pluginsFolder = 'lib/plugins';
 
-  // Game Files
-  var baseFiles = [
-    // game entities
-    entityFolder + 'block-brick.js',
-    entityFolder + 'block-poweritem.js',
-    entityFolder + 'block-question-coin.js',
-    entityFolder + 'block-unbreakable.js',
-    entityFolder + 'block.js',
-    entityFolder + 'coin.js',
-    entityFolder + 'emptyspace.js',
-    entityFolder + 'enemy-beetle.js',
-    entityFolder + 'enemy-fireball.js',
-    entityFolder + 'enemy-goomba.js',
-    entityFolder + 'enemy-koopa.js',
-    entityFolder + 'enemy-pirana.js',
-    entityFolder + 'enemy.js',
-    entityFolder + 'particle-brick.js',
-    entityFolder + 'particle-coin.js',
-    entityFolder + 'particle.js',
-    entityFolder + 'pipe-end.js',
-    entityFolder + 'pipe-extend.js',
-    entityFolder + 'pipe-normal.js',
-    entityFolder + 'pipe.js',
-    entityFolder + 'platform-spawner.js',
-    entityFolder + 'platform.js',
-    entityFolder + 'player.js',
-    entityFolder + 'powerup-flower.js',
-    entityFolder + 'powerup-life.js',
-    entityFolder + 'powerup-mushroom.js',
-    entityFolder + 'powerup-poison.js',
-    entityFolder + 'powerup-star.js',
-    entityFolder + 'powerup.js',
-    entityFolder + 'trigger-end.js',
-    entityFolder + 'trigger-warp.js',
+  const releaseFolder = 'release/';
+  const jsReleaseFolder = releaseFolder + 'js/';
+  const mediaReleaseFolder = releaseFolder + 'media/';
+  const releaseFile = releaseFolder + 'js/mario.js';
+  const releaseMinFile = releaseFolder + 'js/mario.min.js';
 
-    // levels
-    levelsFolder + 'world11.js',
-    levelsFolder + 'world12.js',
-    levelsFolder + 'worldspecial.js',
-
-    // main game file
-    srcFolder + 'main.js'
-  ];
-
-  // Impact Files
-  var vendorFiles = [
-    systemFolder + 'impact.js',
-    systemFolder + 'system.js',
-    systemFolder + 'animation.js',
-    systemFolder + 'background-map.js',
-    systemFolder + 'collision-map.js',
-    systemFolder + 'entity.js',
-    systemFolder + 'font.js',
-    systemFolder + 'game.js',
-    systemFolder + 'image.js',
-    systemFolder + 'input.js',
-    systemFolder + 'loader.js',
-    systemFolder + 'map.js',
-    systemFolder + 'sound.js',
-    systemFolder + 'timer.js',
-    systemFolder + 'util.js',
-    pluginsFolder + 'dynscale.js',
-    pluginsFolder + 'thumbpad.js',
-    pluginsFolder + 'tween.js'
-  ];
+  const s3Folder = 'smb1';
+  const asset_url = DEVELOPMENT
+    ? 'http://localhost:3013'
+    : 'https://dxcrey4r28b1w.cloudfront.net/smb1';
+  const game_url = asset_url + (DEVELOPMENT ? '/js/mario.js' : '/js/mario.min.js');
 
   // utility functions
-  var util = {
+  const util = {
     die: function die () {
       process.exit(0);
       return;
@@ -151,10 +37,7 @@ module.exports = function (grunt) {
   };
 
 
-
-  // grunt configuration
   grunt.initConfig({
-
     s3: {
       options: {
         key: process.env.AWS_KEY,
@@ -165,7 +48,7 @@ module.exports = function (grunt) {
       test: {
         upload: [{
           src: releaseFolder + '**',
-          dest: s3Test,
+          dest: s3Folder,
           rel: releaseFolder
         }]
       }
@@ -174,41 +57,40 @@ module.exports = function (grunt) {
     // lint
     jshint: {
       options: {
-        jshintrc: jsHintFile
+        jshintrc: '.jshint'
       },
       files: {
-        src: lintFiles
+        src: ['lib/game/entities/*.js', 'lib/game/*.js']
       }
     },
 
     // clean
     clean: {
       release: releaseFolder,
-      tmp: tmpFolder
     },
 
-    concat: {
-      dev: {
-        src: [baseFiles],
-        dest: tmpFile
-      },
-      release: {
-        src: [vendorFiles, tmpFile],
-        dest: releaseFile
-      }
-    },
-
-    // replace
-    replace: {
-      release: {
+    mkdir: {
+      all: {
         options: {
-          variables: {
-            version: version
-          }
+          create: ['release/media', 'release/js']
         },
-        files: [
-          {src: tmpFile, dest: tmpFile}
-        ]
+      },
+    },
+
+    'string-replace': {
+      dist: {
+        files: [{
+          expand: true,
+          cwd: '.',
+          src: releaseFile,
+          dest: '.'
+        }],
+        options: {
+          replacements: [{
+            pattern: /\(\'media/g,
+            replacement: "('" + asset_url + "/media" 
+          }]
+        }
       }
     },
 
@@ -219,8 +101,7 @@ module.exports = function (grunt) {
           {expand: true, src: [mediaFolder+'sprites/*'], dest: releaseFolder},
           {expand: true, src: [mediaFolder+'fonts/*'], dest: releaseFolder},
           {expand: true, src: [mediaFolder+'audio/*'], dest: releaseFolder},
-          {expand: true, src: [mediaFolder+'music/*'], dest: releaseFolder},
-          {expand: true, src: ['lib/**/*'], dest: releaseFolder}
+          {expand: true, src: [mediaFolder+'music/*'], dest: releaseFolder}
         ]
       }
     },
@@ -234,8 +115,7 @@ module.exports = function (grunt) {
           {src: releaseFile, dest: releaseMinFile}
         ]
       }
-    }
-
+    },
   });
 
   var checkIsMaster = function (callback) {
@@ -286,11 +166,11 @@ module.exports = function (grunt) {
 
   var baking = function (callback) {
     var exec = require('child_process').exec;
-    exec('php tools/bake.php lib/impact/impact.js lib/game/main.js release/js/mario.min.js', function (err, stdOut, stdErr) {
+    exec('php tools/bake.php lib/impact/impact.js lib/game/main.js release/js/mario.js', function (err, stdOut, stdErr) {
       var out = String(stdOut);
       var baked = out.indexOf('baked') >= 0;
       if(baked){
-        console.log('Toasty as fuck!');
+        console.log('Toasty!');
         callback();
       }
     });
@@ -370,17 +250,19 @@ module.exports = function (grunt) {
   // load up the grunt plugins
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-clean');
-  grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-replace');
+  grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-mkdir');
   grunt.loadNpmTasks('grunt-s3');
+  grunt.loadNpmTasks('grunt-string-replace');
   grunt.loadNpmTasks('grunt-play');
 
   // create our tasks
-  grunt.registerTask('dev', ['clean', 'jshint', 'concat:dev', 'replace:release', 'concat:release', 'copy:media', 'bakery']);
-  grunt.registerTask('prod', ['clean', 'jshint', 'concat:dev', 'replace:release', 'concat:release', 'copy:media', 'bakery']);
-  grunt.registerTask('deploy', ['sure', 'check', 'prod', 'html', 'clean:tmp', 'clean:release', 'awesome']);
-  grunt.registerTask('test', ['prod', 'html', 'clean:tmp', 'tested', 'clean:release']);
-  grunt.registerTask('default', ['dev']);
+  grunt.registerTask('dev', ['clean', 'jshint', 'mkdir', 'copy:media', 'bakery', 'string-replace:dist', 'html']);
+  grunt.registerTask('prod', ['dev', 'uglify:prod']);
+  grunt.registerTask('cleanup', ['clean:release', 'awesome']);
+  grunt.registerTask('deploy', ['sure', 'check', 'prod', 'cleanup']);
+  grunt.registerTask('test', ['prod', 'tested', 'cleanup']);
+  grunt.registerTask('default', ['prod']);
 };
